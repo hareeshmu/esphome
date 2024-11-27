@@ -215,6 +215,8 @@ class LD2450Component : public Component, public uart::UARTDevice {
   }
   int16_t decode_speed_(uint8_t low_byte, uint8_t high_byte) {
     int16_t speed = (high_byte & 0x7F) << 8 | low_byte;
+    if ((high_byte & 0x80) == 0)
+       speed = -speed;
     return speed * 10;  // mm/s
   }
   std::string convert_signed_int_to_hex_(int value) {
