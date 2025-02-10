@@ -5,13 +5,12 @@ from esphome.const import (
     CONF_FACTORY_RESET,
     CONF_RESTART,
     DEVICE_CLASS_RESTART,
-    ENTITY_CATEGORY_CONFIG,
     ENTITY_CATEGORY_DIAGNOSTIC,
-    ICON_DATABASE,
+    ENTITY_CATEGORY_CONFIG,
     ICON_RESTART,
     ICON_RESTART_ALERT,
+    ICON_DATABASE,
 )
-
 from .. import CONF_LD2410_ID, LD2410Component, ld2410_ns
 
 QueryButton = ld2410_ns.class_("QueryButton", button.Button)
