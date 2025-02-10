@@ -216,7 +216,7 @@ class LD2450Component : public Component, public uart::UARTDevice {
   int16_t decode_speed_(uint8_t low_byte, uint8_t high_byte) {
     int16_t speed = (high_byte & 0x7F) << 8 | low_byte;
     if ((high_byte & 0x80) == 0)
-       speed = -speed;
+      speed = -speed;
     return speed * 10;  // mm/s
   }
   std::string convert_signed_int_to_hex_(int value) {
@@ -239,11 +239,15 @@ class LD2450Component : public Component, public uart::UARTDevice {
     return angle_degrees;
   }
   std::string get_direction_(int16_t speed) {
+    static const std::string APPROACHING = "Approaching";
+    static const std::string MOVING_AWAY = "Moving away";
+    static const std::string STATIONARY = "Stationary";
+
     if (speed > 0)
-      return "Moving away";
+      return MOVING_AWAY;
     if (speed < 0)
-      return "Coming closer";
-    return "Stationary";
+      return APPROACHING;
+    return STATIONARY;
   }
   int32_t uptime_millis_ = millis();
   int32_t last_periodic_millis_ = millis();
