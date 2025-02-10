@@ -1,25 +1,25 @@
 uart:
-  id: ld2450_uart
-  tx_pin: ${tx_pin}
-  rx_pin: ${rx_pin}
-  baud_rate: 256000
-  parity: NONE
-  stop_bits: 1
+  - id: ld2450_uart
+    tx_pin: ${tx_pin}
+    rx_pin: ${rx_pin}
+    baud_rate: 256000
+    parity: NONE
+    stop_bits: 1
 
 ld2450:
-  id: ld2450_radar
-  uart_id: ld2450_uart
-  throttle: 1000ms
+  - id: ld2450_radar
+    uart_id: ld2450_uart
+    throttle: 1000ms
 
 button:
   - platform: ld2450
     ld2450_id: ld2450_radar
     factory_reset:
-      name: "LD2450 Factory Reset"
-      entity_category: "config"
+      name: LD2450 Factory Reset
+      entity_category: config
     restart:
-      name: "LD2450 Restart"
-      entity_category: "config"
+      name: LD2450 Restart
+      entity_category: config
 
 sensor:
   - platform: ld2450
@@ -105,32 +105,32 @@ switch:
   - platform: ld2450
     ld2450_id: ld2450_radar
     bluetooth:
-      name: "Bluetooth"
+      name: Bluetooth
     multi_target:
-      name: "Multi Target Tracking"
+      name: Multi Target Tracking
 
 text_sensor:
   - platform: ld2450
     ld2450_id: ld2450_radar
     version:
-      name: "LD2450 Firmware"
+      name: LD2450 Firmware
     mac_address:
-      name: "LD2450 BT MAC"
+      name: LD2450 BT MAC
     target_1:
       direction:
-        name: "Target-1 Direction"
+        name: Target-1 Direction
     target_2:
       direction:
-        name: "Target-2 Direction"
+        name: Target-2 Direction
     target_3:
       direction:
-        name: "Target-3 Direction"
+        name: Target-3 Direction
 
 number:
   - platform: ld2450
     ld2450_id: ld2450_radar
     presence_timeout:
-      name: "Timeout"
+      name: Timeout
     zone_1:
       x1:
         name: Zone-1 X1
@@ -163,6 +163,6 @@ select:
   - platform: ld2450
     ld2450_id: ld2450_radar
     baud_rate:
-      name: "Baud rate"
+      name: Baud Rate
     zone_type:
-      name: "Zone Type"
+      name: Zone Type
