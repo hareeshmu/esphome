@@ -1,11 +1,8 @@
 import esphome.codegen as cg
 from esphome.components import select
 import esphome.config_validation as cv
-from esphome.const import (
-    ENTITY_CATEGORY_CONFIG,
-    CONF_BAUD_RATE,
-    ICON_THERMOMETER,
-)
+from esphome.const import CONF_BAUD_RATE, ENTITY_CATEGORY_CONFIG, ICON_THERMOMETER
+
 from .. import CONF_LD2450_ID, LD2450Component, ld2450_ns
 
 CONF_ZONE_TYPE = "zone_type"

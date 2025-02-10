@@ -3,27 +3,25 @@ from esphome.components import number
 import esphome.config_validation as cv
 from esphome.const import (
     CONF_ID,
-    UNIT_SECOND,
+    DEVICE_CLASS_DISTANCE,
     ENTITY_CATEGORY_CONFIG,
     ICON_TIMELAPSE,
-    DEVICE_CLASS_DISTANCE,
+    UNIT_SECOND,
 )
+
 from .. import CONF_LD2450_ID, LD2450Component, ld2450_ns
 
 CONF_PRESENCE_TIMEOUT = "presence_timeout"
-UNIT_MILLIMETER = "mm"
-
-MAX_ZONES = 3
-
 CONF_X1 = "x1"
-CONF_Y1 = "y1"
 CONF_X2 = "x2"
+CONF_Y1 = "y1"
 CONF_Y2 = "y2"
-
-ICON_ARROW_TOP_LEFT_BOLD_BOX_OUTLINE = "mdi:arrow-top-left-bold-box-outline"
-ICON_ARROW_TOP_LEFT = "mdi:arrow-top-left"
-ICON_ARROW_BOTTOM_RIGHT_BOLD_BOX_OUTLINE = "mdi:arrow-bottom-right-bold-box-outline"
 ICON_ARROW_BOTTOM_RIGHT = "mdi:arrow-bottom-right"
+ICON_ARROW_BOTTOM_RIGHT_BOLD_BOX_OUTLINE = "mdi:arrow-bottom-right-bold-box-outline"
+ICON_ARROW_TOP_LEFT = "mdi:arrow-top-left"
+ICON_ARROW_TOP_LEFT_BOLD_BOX_OUTLINE = "mdi:arrow-top-left-bold-box-outline"
+MAX_ZONES = 3
+UNIT_MILLIMETER = "mm"
 
 PresenceTimeoutNumber = ld2450_ns.class_("PresenceTimeoutNumber", number.Number)
 ZoneCoordinateNumber = ld2450_ns.class_("ZoneCoordinateNumber", number.Number)
@@ -42,7 +40,7 @@ CONFIG_SCHEMA = cv.Schema(
 
 CONFIG_SCHEMA = CONFIG_SCHEMA.extend(
     {
-        cv.Optional(f"zone_{n+1}"): cv.Schema(
+        cv.Optional(f"zone_{n + 1}"): cv.Schema(
             {
                 cv.Required(CONF_X1): number.number_schema(
                     ZoneCoordinateNumber,
@@ -91,7 +89,7 @@ async def to_code(config):
         await cg.register_parented(n, config[CONF_LD2450_ID])
         cg.add(ld2450_component.set_presence_timeout_number(n))
     for x in range(MAX_ZONES):
-        if zone_conf := config.get(f"zone_{x+1}"):
+        if zone_conf := config.get(f"zone_{x + 1}"):
             if zone_x1_config := zone_conf.get(CONF_X1):
                 n = cg.new_Pvariable(zone_x1_config[CONF_ID], x)
                 await number.register_number(

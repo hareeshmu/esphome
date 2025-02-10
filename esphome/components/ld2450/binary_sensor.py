@@ -2,19 +2,20 @@ import esphome.codegen as cg
 from esphome.components import binary_sensor
 import esphome.config_validation as cv
 from esphome.const import (
+    CONF_HAS_MOVING_TARGET,
+    CONF_HAS_STILL_TARGET,
+    CONF_HAS_TARGET,
     DEVICE_CLASS_MOTION,
     DEVICE_CLASS_OCCUPANCY,
 )
+
 from . import CONF_LD2450_ID, LD2450Component
 
 DEPENDENCIES = ["ld2450"]
-CONF_HAS_TARGET = "has_target"
-CONF_HAS_MOVING_TARGET = "has_moving_target"
-CONF_HAS_STILL_TARGET = "has_still_target"
 
+ICON_MEDITATION = "mdi:meditation"
 ICON_SHIELD_ACCOUNT = "mdi:shield-account"
 ICON_TARGET_ACCOUNT = "mdi:target-account"
-ICON_MEDITATION = "mdi:meditation"
 
 CONFIG_SCHEMA = {
     cv.GenerateID(CONF_LD2450_ID): cv.use_id(LD2450Component),
