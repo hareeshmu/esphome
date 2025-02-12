@@ -34,24 +34,24 @@ static const uint8_t CMD_SET_ZONE = 0x00C2;
 
 static inline uint16_t convert_seconds_to_ms(uint16_t value) { return value * 1000; };
 
-static inline std::string convert_signed_int_to_hex_(int value) {
+static inline std::string convert_signed_int_to_hex(int value) {
   auto value_as_str = str_snprintf("%04x", 4, value & 0xFFFF);
   return value_as_str;
 }
 
-static inline void convert_int_values_to_hex_(const int *values, uint8_t *bytes) {
+static inline void convert_int_values_to_hex(const int *values, uint8_t *bytes) {
   for (int i = 0; i < 4; i++) {
-    std::string temp_hex = convert_signed_int_to_hex_(values[i]);
+    std::string temp_hex = convert_signed_int_to_hex(values[i]);
     bytes[i * 2] = std::stoi(temp_hex.substr(2, 2), nullptr, 16);      // Store high byte
     bytes[i * 2 + 1] = std::stoi(temp_hex.substr(0, 2), nullptr, 16);  // Store low byte
   }
 }
 
-static inline int convert_two_byte_to_int_(char firstbyte, char secondbyte) {
+static inline int convert_two_byte_to_int(char firstbyte, char secondbyte) {
   return (int16_t) (secondbyte << 8) + firstbyte;
 }
 
-static inline int16_t decode_coordinate_(uint8_t low_byte, uint8_t high_byte) {
+static inline int16_t decode_coordinate(uint8_t low_byte, uint8_t high_byte) {
   int16_t coordinate = (high_byte & 0x7F) << 8 | low_byte;
   if ((high_byte & 0x80) == 0) {
     coordinate = -coordinate;
@@ -59,7 +59,7 @@ static inline int16_t decode_coordinate_(uint8_t low_byte, uint8_t high_byte) {
   return coordinate;  // mm
 }
 
-static inline int16_t decode_speed_(uint8_t low_byte, uint8_t high_byte) {
+static inline int16_t decode_speed(uint8_t low_byte, uint8_t high_byte) {
   int16_t speed = (high_byte & 0x7F) << 8 | low_byte;
   if ((high_byte & 0x80) == 0) {
     speed = -speed;
@@ -67,7 +67,7 @@ static inline int16_t decode_speed_(uint8_t low_byte, uint8_t high_byte) {
   return speed * 10;  // mm/s
 }
 
-static inline int16_t hex_to_signed_int_(const uint8_t *buffer, uint8_t offset) {
+static inline int16_t hex_to_signed_int(const uint8_t *buffer, uint8_t offset) {
   uint16_t hex_val = (buffer[offset + 1] << 8) | buffer[offset];
   int16_t dec_val = static_cast<int16_t>(hex_val);
   if (dec_val & 0x8000) {
@@ -76,7 +76,7 @@ static inline int16_t hex_to_signed_int_(const uint8_t *buffer, uint8_t offset) 
   return dec_val;
 }
 
-static inline float calculate_angle_(float base, float hypotenuse) {
+static inline float calculate_angle(float base, float hypotenuse) {
   if (base < 0.0 || hypotenuse <= 0.0) {
     return 0.0;
   }
@@ -85,7 +85,7 @@ static inline float calculate_angle_(float base, float hypotenuse) {
   return angle_degrees;
 }
 
-static inline std::string get_direction_(int16_t speed) {
+static inline std::string get_direction(int16_t speed) {
   static const char *const APPROACHING = "Approaching";
   static const char *const MOVING_AWAY = "Moving away";
   static const char *const STATIONARY = "Stationary";
@@ -254,7 +254,7 @@ void LD2450Component::send_set_zone_command_() {
   for (int i = 0; i < MAX_ZONES; i++) {
     int values[4] = {this->zone_config_[i].x1, this->zone_config_[i].y1, this->zone_config_[i].x2,
                      this->zone_config_[i].y2};
-    ld2450::convert_int_values_to_hex_(values, area_config + (i * 8));
+    ld2450::convert_int_values_to_hex(values, area_config + (i * 8));
   }
   std::memcpy(cmd_value, zone_type_bytes, 2);
   std::memcpy(cmd_value + 2, area_config, 24);
@@ -280,10 +280,10 @@ void LD2450Component::process_zone_(uint8_t *buffer) {
   uint8_t index, start;
   for (index = 0; index < MAX_ZONES; index++) {
     start = 12 + index * 8;
-    this->zone_config_[index].x1 = ld2450::hex_to_signed_int_(buffer, start);
-    this->zone_config_[index].y1 = ld2450::hex_to_signed_int_(buffer, start + 2);
-    this->zone_config_[index].x2 = ld2450::hex_to_signed_int_(buffer, start + 4);
-    this->zone_config_[index].y2 = ld2450::hex_to_signed_int_(buffer, start + 6);
+    this->zone_config_[index].x1 = ld2450::hex_to_signed_int(buffer, start);
+    this->zone_config_[index].y1 = ld2450::hex_to_signed_int(buffer, start + 2);
+    this->zone_config_[index].x2 = ld2450::hex_to_signed_int(buffer, start + 4);
+    this->zone_config_[index].y2 = ld2450::hex_to_signed_int(buffer, start + 6);
 #ifdef USE_NUMBER
     this->zone_x1_numbers_[index]->publish_state(this->zone_config_[index].x1);
     this->zone_y1_numbers_[index]->publish_state(this->zone_config_[index].y1);
@@ -398,7 +398,7 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
     is_moving = false;
     sensor::Sensor *sx = this->move_x_sensors_[index];
     if (sx != nullptr) {
-      val = ld2450::decode_coordinate_(buffer[start], buffer[start + 1]);
+      val = ld2450::decode_coordinate(buffer[start], buffer[start + 1]);
       tx = val;
       sx->publish_state(val);
     }
@@ -406,7 +406,7 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
     start = TARGET_Y + index * 8;
     sensor::Sensor *sy = this->move_y_sensors_[index];
     if (sy != nullptr) {
-      val = ld2450::decode_coordinate_(buffer[start], buffer[start + 1]);
+      val = ld2450::decode_coordinate(buffer[start], buffer[start + 1]);
       ty = val;
       sy->publish_state(val);
     }
@@ -414,7 +414,7 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
     start = TARGET_SPEED + index * 8;
     sensor::Sensor *ss = this->move_speed_sensors_[index];
     if (ss != nullptr) {
-      val = ld2450::decode_speed_(buffer[start], buffer[start + 1]);
+      val = ld2450::decode_speed(buffer[start], buffer[start + 1]);
       ts = val;
       if (val) {
         is_moving = true;
@@ -433,8 +433,8 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
     sensor::Sensor *sd = this->move_distance_sensors_[index];
     if (sd != nullptr) {
       val = (uint16_t) sqrt(
-          pow(ld2450::decode_coordinate_(buffer[TARGET_X + index * 8], buffer[(TARGET_X + index * 8) + 1]), 2) +
-          pow(ld2450::decode_coordinate_(buffer[TARGET_Y + index * 8], buffer[(TARGET_Y + index * 8) + 1]), 2));
+          pow(ld2450::decode_coordinate(buffer[TARGET_X + index * 8], buffer[(TARGET_X + index * 8) + 1]), 2) +
+          pow(ld2450::decode_coordinate(buffer[TARGET_Y + index * 8], buffer[(TARGET_Y + index * 8) + 1]), 2));
       td = val;
       if (val > 0) {
         target_count++;
@@ -443,7 +443,7 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
       sd->publish_state(val);
     }
     // ANGLE
-    angle = calculate_angle_(static_cast<float>(ty), static_cast<float>(td));
+    angle = calculate_angle(static_cast<float>(ty), static_cast<float>(td));
     if (tx > 0) {
       angle = angle * -1;
     }
@@ -454,7 +454,7 @@ void LD2450Component::handle_periodic_data_(uint8_t *buffer, uint8_t len) {
 #endif
     // DIRECTION
 #ifdef USE_TEXT_SENSOR
-    direction = get_direction_(ts);
+    direction = get_direction(ts);
     if (td == 0) {
       direction = "NA";
     }
@@ -577,7 +577,7 @@ bool LD2450Component::handle_ack_data_(uint8_t *buffer, uint8_t len) {
     ESP_LOGE(TAG, "Ack data: invalid status");
     return true;
   }
-  if (ld2450::convert_two_byte_to_int_(buffer[8], buffer[9]) != 0x00) {
+  if (ld2450::convert_two_byte_to_int(buffer[8], buffer[9]) != 0x00) {
     ESP_LOGE(TAG, "Ack data: last buffer was %u, %u", buffer[8], buffer[9]);
     return true;
   }
@@ -646,7 +646,7 @@ bool LD2450Component::handle_ack_data_(uint8_t *buffer, uint8_t len) {
       ESP_LOGV(TAG, "Got query target tracking mode command");
 #ifdef USE_SWITCH
       if (this->multi_target_switch_ != nullptr) {
-        this->multi_target_switch_->publish_state(buffer[10] == 0x02 ? true : false);
+        this->multi_target_switch_->publish_state(buffer[10] == 0x02);
       }
 #endif
       break;
