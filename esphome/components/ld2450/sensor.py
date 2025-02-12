@@ -9,6 +9,7 @@ from esphome.const import (
     DEVICE_CLASS_DISTANCE,
     DEVICE_CLASS_SPEED,
     UNIT_DEGREES,
+    UNIT_MILLIMETER,
 )
 
 from . import CONF_LD2450_ID, LD2450Component
@@ -35,7 +36,6 @@ ICON_SPEEDOMETER_SLOW = "mdi:speedometer-slow"
 MAX_TARGETS = 3
 MAX_ZONES = 3
 
-UNIT_MILLIMETER = "mm"
 UNIT_MILLIMETER_PER_SECOND = "mm/s"
 
 CONFIG_SCHEMA = cv.Schema(

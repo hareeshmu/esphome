@@ -6,6 +6,7 @@ from esphome.const import (
     DEVICE_CLASS_DISTANCE,
     ENTITY_CATEGORY_CONFIG,
     ICON_TIMELAPSE,
+    UNIT_MILLIMETER,
     UNIT_SECOND,
 )
 
@@ -21,7 +22,6 @@ ICON_ARROW_BOTTOM_RIGHT_BOLD_BOX_OUTLINE = "mdi:arrow-bottom-right-bold-box-outl
 ICON_ARROW_TOP_LEFT = "mdi:arrow-top-left"
 ICON_ARROW_TOP_LEFT_BOLD_BOX_OUTLINE = "mdi:arrow-top-left-bold-box-outline"
 MAX_ZONES = 3
-UNIT_MILLIMETER = "mm"
 
 PresenceTimeoutNumber = ld2450_ns.class_("PresenceTimeoutNumber", number.Number)
 ZoneCoordinateNumber = ld2450_ns.class_("ZoneCoordinateNumber", number.Number)
