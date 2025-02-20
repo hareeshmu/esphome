@@ -47,10 +47,6 @@ static inline void convert_int_values_to_hex(const int *values, uint8_t *bytes) 
   }
 }
 
-static inline int convert_two_byte_to_int(char firstbyte, char secondbyte) {
-  return (int16_t) (secondbyte << 8) + firstbyte;
-}
-
 static inline int16_t decode_coordinate(uint8_t low_byte, uint8_t high_byte) {
   int16_t coordinate = (high_byte & 0x7F) << 8 | low_byte;
   if ((high_byte & 0x80) == 0) {
@@ -577,7 +573,7 @@ bool LD2450Component::handle_ack_data_(uint8_t *buffer, uint8_t len) {
     ESP_LOGE(TAG, "Ack data: invalid status");
     return true;
   }
-  if (ld2450::convert_two_byte_to_int(buffer[8], buffer[9]) != 0x00) {
+  if (buffer[8] || buffer[9]) {
     ESP_LOGE(TAG, "Ack data: last buffer was %u, %u", buffer[8], buffer[9]);
     return true;
   }
